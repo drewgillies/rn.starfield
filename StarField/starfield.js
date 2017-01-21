@@ -2,33 +2,70 @@
 import React, { Component } from 'react';
 import {
     View,
-    Alert
+    Alert,
+    Text
 } from 'react-native';
 
 export class StarField extends React.Component {
     constructor(props) {
-    	super(props);
-        this.state = {starpos: 10};
-
+        super(props);
+        this.state = {
+            cachedWidth: 0,
+            cachedHeight: 0,
+            starPositions: []
+        };
 
         setInterval(() => {
-//Alert.alert('Test', this.props.onGetBounds().width + "",);
+            width = this.props.getDimensions().width;
+            height = this.props.getDimensions().height;
+            if (width != this.state.cachedWidth || height != this.state.cachedHeight) {
+                this.resize(width, height);
+            }
 
-        	let currentpos = this.state.starpos + 10;
-        	if (currentpos>this.props.onGetBounds().width) {
-        		currentpos = 10;
-        	}
-        	this.setState({starpos: currentpos});
-        }, 300);
+            for (let i = 0; i < this.props.starCount; i++) {
+                this.state.starPositions[i].x = this.state.starPositions[i].x + 3;
+                if (this.state.starPositions[i].x > this.props.getDimensions().width) {
+                    this.state.starPositions[i].x = 0;
+                }
+            }
+
+            this.forceUpdate();
+        }, 40);
     }
 
     render() {
-        let pic = {
-            uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
-        };
-        let pos = this.state.starpos;
-        return (
-            <View style={{backgroundColor: 'blue', position: 'absolute', left: pos, top: 0, width: 5, height: 5}}/> 
-        );
+        if (this.state.starPositions.length > 1)
+        {
+            var stars = [];
+            for (var i = 0; i < this.state.starPositions.length; i++) {
+                stars.push(<View
+                    key={i}
+                    style={{backgroundColor: 'white', 
+                        position: 'absolute', 
+                        left: this.state.starPositions[i].x, 
+                        top: this.state.starPositions[i].y, 
+                        width: 3, 
+                        height: 2}}/>);
+
+            }
+            return (
+                <View>{stars}</View>
+            );
+        } else {
+            return (
+                <Text></Text>
+            );
+        }
+    }
+
+    resize(width, height) {
+        this.setState({
+            starPositions: [],
+            cachedWidth: width,
+            cachedHeight: height
+        });
+        for (let i = 0; i < this.props.starCount; i++) {
+            this.state.starPositions.push({x: Math.floor(Math.random() * width), y: Math.floor(Math.random() * height)});
+        }
     }
 }
