@@ -38,14 +38,21 @@ export class StarField extends React.Component {
         {
             var stars = [];
             for (var i = 0; i < this.state.starPositions.length; i++) {
-                stars.push(<View
-                    key={i}
-                    style={{backgroundColor: 'white', 
-                        position: 'absolute', 
-                        left: this.state.starPositions[i].x, 
-                        top: this.state.starPositions[i].y, 
-                        width: 3, 
-                        height: 2}}/>);
+                var starColor = this.calculateColor(5);
+                //Alert.alert('test', starColor,);
+                stars.push(
+                    <View
+                        key={i}
+                        style={{
+                            backgroundColor: starColor, 
+                            position: 'absolute', 
+                            left: this.state.starPositions[i].x, 
+                            top: this.state.starPositions[i].y, 
+                            width: 2, 
+                            height: 1
+                        }}
+                    />
+                );
 
             }
             return (
@@ -58,6 +65,11 @@ export class StarField extends React.Component {
         }
     }
 
+    calculateColor(z)
+    {
+        return 'white';
+    }
+
     resize(width, height) {
         this.setState({
             starPositions: [],
@@ -65,7 +77,11 @@ export class StarField extends React.Component {
             cachedHeight: height
         });
         for (let i = 0; i < this.props.starCount; i++) {
-            this.state.starPositions.push({x: Math.floor(Math.random() * width), y: Math.floor(Math.random() * height)});
+            this.state.starPositions.push({
+                x: Math.floor(Math.random() * width), 
+                y: Math.floor(Math.random() * height),
+                z: Math.floor(Math.random() * 10)            // z is an arbitrary constant for whiteness and speed
+            });
         }
     }
 }
